@@ -10,3 +10,8 @@
 - [M5GFX](https://github.com/m5stack/M5GFX)
 - [M5Unified](https://github.com/m5stack/M5Unified)
 - [TFT_eSPI](https://github.com/Bodmer/TFT_eSPI)
+
+
+## Board parameters
+
+![image](https://github.com/user-attachments/assets/30cfc503-2376-436e-a9a3-5c22cb2eb589)
