@@ -14,4 +14,8 @@
 
 ## Board parameters
 
-![image](https://github.com/user-attachments/assets/30cfc503-2376-436e-a9a3-5c22cb2eb589)
+M5Dial/M5StampS3 comes with 8MB of built-in Flash:
+- Flash size: 8MB
+- Partition scheme: 8MB with spiffs
+
+![image](https://github.com/user-attachments/assets/2e2eed98-4d13-4651-ac36-cc2ed2ea120b)
