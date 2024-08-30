@@ -10,8 +10,6 @@
 #include "M5GFX.h"
 #include "M5_ADS1115.h"
 
-
-
 #define M5_UNIT_VMETER_I2C_ADDR             0x49
 #define M5_UNIT_VMETER_EEPROM_I2C_ADDR      0x53
 #define M5_UNIT_VMETER_PRESSURE_COEFFICIENT 0.015918958F
@@ -29,7 +27,7 @@ esp_now_peer_info_t peerInfo;
 TFT_eSPI tft = TFT_eSPI();
 TFT_eSprite spr = TFT_eSprite(&tft);
 
-//colors
+// colors
 unsigned short grays[15];
 unsigned short blue[2]={0x09AA,0x00C4};
 unsigned short orange=0xA3C0;
@@ -44,13 +42,13 @@ String macStr[6]={"0a","0a","0a","0a","0a","0a"};
 String remoteLbl[2]={"OFF","ON"};
 String modeLbl[2]={"SOLAR","SOLAR"};
 
-bool mode=0; //0=reciever, 1 is sender
+bool mode=0; // 0=reciever, 1 is sender
 bool setMode=0;
 int deb=0;
 int chosenAdd=0; 
 bool ind=0;
-long oldPosition = -999; // neede for rotary encoder
-long old=-999; //also for rotary
+long oldPosition = -999; // needed for rotary encoder
+long old=-999; // also for rotary
 bool first=0;
 int brightness[12]={14,20,30,40,50,60,80,100,130,160,200,245};
 int bri=3;
@@ -72,7 +70,7 @@ int sy=140;
 int timeWait=0;
 String sta="UNKNOWN";
 
-unsigned long period=10000;  // time board will be awake in millseconds
+unsigned long period=10000; // time board will be awake in millseconds
 
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   if(status == ESP_NOW_SEND_SUCCESS) 
@@ -82,11 +80,10 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
 
 void initEspNow()
 {
- 
     // Initialize Wi-Fi in STA mode and disconnect
     WiFi.mode(WIFI_STA);
     WiFi.disconnect();
-    delay(50);  // Slightly longer delay to ensure Wi-Fi mode changes are stable
+    delay(50); // Slightly longer delay to ensure Wi-Fi mode changes are stable
 
     // Check if ESP-NOW initialization is successful
     if (esp_now_init() != ESP_OK) {
@@ -108,7 +105,7 @@ void initEspNow()
     // Set up peer information
     memset(&peerInfo, 0, sizeof(peerInfo));
     memcpy(peerInfo.peer_addr, broadcastAddress, 6);
-    peerInfo.channel = 0;  // Channel 0 means the current channel
+    peerInfo.channel = 0; // Channel 0 means the current channel
     peerInfo.encrypt = false;
 
     // Add the peer and check for success
@@ -117,7 +114,6 @@ void initEspNow()
       return;
     }
     Serial.println("Peer added successfully");
- 
 }
 
 
@@ -156,32 +152,30 @@ void setup() {
     initEspNow();
     }
 
-    
     M5Dial.Display.setBrightness(brightness[bri]);
     spr.createSprite(240,240);
 
-        int co=225;
-        for(int i=0;i<15;i++)
-        {grays[i]=tft.color565(co, co, co);
-        co=co-15;}
+    int co=225;
+    for(int i=0;i<15;i++)
+    {grays[i]=tft.color565(co, co, co);
+    co=co-15;}
 
-        for(int i=0;i<8;i++)
+    for(int i=0;i<8;i++)
     {
        x[i]=((r-1)*cos(rad*(i*45)))+sx;
        y[i]=((r-1)*sin(rad*(i*45)))+sy;
        px[i]=(r*cos(rad*(i*45)))+sx;
        py[i]=(r*sin(rad*(i*45)))+sy;
     }
-  draw();      
+    draw();      
 }
-
 
 
 void draw()
 {
   spr.fillSprite(TFT_BLACK);
   
-  //UPER SHAPE
+  // UPPER SHAPE
   spr.fillRect(10,8,100,42,blue[mode]);
   spr.fillRect(110,18,10,22,blue[mode]);
   spr.fillTriangle(110,8,110,18,120,18,blue[mode]);
@@ -190,7 +184,7 @@ void draw()
   spr.fillSmoothRoundRect(70, 26, 36, 17, 7, onOffCol[1]);
   spr.fillSmoothCircle(78+(1*19), 34, 5, grays[2],onOffCol[1]);
   
-  //BOTTOM SHAPE
+  // BOTTOM SHAPE
   spr.fillRect(95,194,124,42,blue[mode]);
   spr.fillRect(85,204,10,22,blue[mode]);
   spr.fillTriangle(85,204,95,194,95,204,blue[mode]);
@@ -198,7 +192,7 @@ void draw()
   spr.fillSmoothRoundRect(96, 198, 80, 24, 5, TFT_BLACK,blue[mode]);
   spr.fillSmoothRoundRect(100, 202, 30, 16, 3, red,blue[mode]);
 
-  //UPER LINE
+  // UPPER LINE
   spr.drawWedgeLine(10,60,118,60,1,1,grays[6]);
   spr.drawWedgeLine(118,60,124,74,1,1,grays[6]);
   spr.drawWedgeLine(124,75,216,75,1,1,grays[6]);
@@ -209,7 +203,7 @@ void draw()
   spr.drawWedgeLine(60,146,42,168,1,1,grays[6]);
   spr.drawWedgeLine(42,168,10,168,1,1,grays[6]);
 
-  //wake time
+  // wake time
   int longLL=map(period-millis(),0,10000,0,90);
   spr.fillRoundRect(20,68,longLL,3,2,0x1311);
 
@@ -239,9 +233,9 @@ void draw()
   spr.setTextColor(grays[3],blue[mode]);
   spr.drawString(remoteLbl[1],38,28);
  
-   spr.setTextColor(grays[1],0x8000);
+  spr.setTextColor(grays[1],0x8000);
    spr.fillSmoothRoundRect(126,23,74,17,3,0x8000,TFT_BLACK);
-  spr.drawString(modeLbl[mode],128,25);   // sender or reciever
+  spr.drawString(modeLbl[mode],128,25); // sender or reciever
 
    for(int i=0;i<9;i++)
     {
@@ -253,8 +247,8 @@ void draw()
     }
   spr.unloadFont();
 
-   spr.setTextDatum(0);
-  //spr.loadFont(smallFont);
+  spr.setTextDatum(0);
+  // spr.loadFont(smallFont);
   spr.setTextColor(grays[10],TFT_BLACK);
 
   
