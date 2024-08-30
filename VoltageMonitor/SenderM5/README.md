@@ -1,5 +1,8 @@
 ## Solar Energy System M5Dial sender
 
+- Watch [Monitor Your Solar Energy System Remotely Using ESP32 (Easy DIY)](https://youtu.be/qzITUL2FK7k?si=jzOzGdcNWpmXHgjK) on YouTube
+
+
 ## Arduino libraries
 
 - [M5-ADS1115](https://github.com/m5stack/M5-ADS1115)
