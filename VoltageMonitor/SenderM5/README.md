@@ -23,6 +23,6 @@ M5Dial/M5StampS3 comes with 8MB of built-in Flash:
 
 ### Voltage module
 
-Connect the to PORT A（RED）:
+Connect the [Voltmeter Unit (ADS1115)](https://docs.m5stack.com/en/unit/vmeter) to PORT A（RED）:
   - SDA: GPIO13
   - SCL: GPIO15
