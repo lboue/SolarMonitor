@@ -39,10 +39,12 @@ int posx[16]={40,80,120,160,40,80,120,160,40,80,120,160,40,80,120,160};
 int posy[16]={56,56,56,56,96,96,96,96,136,136,136,136,176,176,176,176};
 String lbl[16]={"1","2","3","A","4","5","6","B","7","8","9","C","0","D","E","F"};
 String macStr[6]={"0a","0a","0a","0a","0a","0a"};
+String espNowModeLbl[2]={"RECIEVER","SENDER"};
 String remoteLbl[2]={"OFF","ON"};
 String modeLbl[2]={"SOLAR","SOLAR"};
 
-bool mode=0; // 0=reciever, 1 is sender
+int mode=1; // 0=reciever, 1 is sender
+bool i2c_init = false;
 bool setMode=0;
 int deb=0;
 int chosenAdd=0; 
@@ -126,10 +128,10 @@ void setup() {
   gpio_wakeup_enable(GPIO_NUM_42, GPIO_INTR_LOW_LEVEL);
   esp_sleep_enable_gpio_wakeup();
 
-  mode = Vmeter.begin(&Wire, M5_UNIT_VMETER_I2C_ADDR, SDA, SCL, 400000U);
+  i2c_init = Vmeter.begin(&Wire, M5_UNIT_VMETER_I2C_ADDR, SDA, SCL, 400000U);
   delay(100);
 
-  if (mode) {
+  if (i2c_init) {
     Vmeter.setEEPROMAddr(M5_UNIT_VMETER_EEPROM_I2C_ADDR);
     Vmeter.setMode(ADS1115_MODE_SINGLESHOT);
     Vmeter.setRate(ADS1115_RATE_8);
@@ -228,7 +230,7 @@ void draw() {
 
   spr.setTextColor(grays[1], 0x8000);
   spr.fillSmoothRoundRect(126, 23, 74, 17, 3, 0x8000, TFT_BLACK);
-  spr.drawString(modeLbl[mode], 128, 25);  // sender or reciever
+  spr.drawString(modeLbl[mode], 128, 25);
 
   for (int i = 0; i < 9; i++) {
     if (i == ani)
@@ -248,7 +250,8 @@ void draw() {
                    176);
 
   spr.setTextColor(grays[6], TFT_BLACK);
-  spr.drawString("RECIEVER", 30, 188);
+  spr.drawString(espNowModeLbl[mode], 30, 188); // sender or reciever
+  
   spr.setTextColor(grays[3], blue[mode]);
   spr.drawString("REMOTE", 70, 14);
   spr.drawString("SETUP", 132, 224);
@@ -291,7 +294,7 @@ void loop() {
 
   M5Dial.update();
 
-  if (mode == 1 && setMode == 0 && timeWait == 0) {
+  if (i2c_init == 1 && setMode == 0 && timeWait == 0) {
     int16_t adc_raw = Vmeter.getSingleConversion();
     voltage = adc_raw * resolution * calibration_factor;
     voltage = voltage / 1000.00;
